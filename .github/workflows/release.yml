@@ -1,0 +1,118 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+    - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build Windows executable
+        run: |
+          bun build --compile `
+            --target=bun-windows-x64 `
+            --minify `
+            --sourcemap `
+            --bytecode `
+            --windows-hide-console `
+            ./src/index.ts `
+            --outfile lfmplayr.exe
+
+      - name: Create Windows archive
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path release
+          Compress-Archive `
+            -Path lfmplayr.exe `
+            -DestinationPath release/lfmplayr-windows-x64.zip
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lfmplayr-windows-x64
+          path: release/lfmplayr-windows-x64.zip
+
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build Linux executable
+        run: |
+          bun build --compile \
+            --target=bun-linux-x64 \
+            --minify \
+            --sourcemap \
+            --bytecode \
+            ./src/index.ts \
+            --outfile lfmplayr
+
+      - name: Make executable
+        run: chmod +x lfmplayr
+
+      - name: Create Linux archive
+        run: |
+          mkdir -p release
+          tar -czf release/lfmplayr-linux-x64.tar.gz lfmplayr
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lfmplayr-linux-x64
+          path: release/lfmplayr-linux-x64.tar.gz
+
+  release:
+    name: Create GitHub Release
+    needs:
+    - build-windows
+    - build-linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lfmplayr-windows-x64
+          path: release
+
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lfmplayr-linux-x64
+          path: release
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/lfmplayr-windows-x64.zip
+            release/lfmplayr-linux-x64.tar.gz
+          generate_release_notes: true
