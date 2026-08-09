@@ -2,6 +2,7 @@ import { drizzle, SQLiteBunDatabase } from 'drizzle-orm/bun-sqlite';
 import { Database } from 'bun:sqlite';
 import { eq } from 'drizzle-orm';
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator';
+import { AssetLoader } from '@/AssetLoader';
 
 
 
@@ -26,8 +27,10 @@ class BaseDatabase {
 
         const sqlite = new Database(this.DBFilePath);
         this.db = drizzle({ client: sqlite });
-        
-        migrate(this.db, { migrationsFolder:this.MigrationPath });
+
+        const drizzlePath = await AssetLoader.Load(this.MigrationPath);
+        console.log("drizzlePath", drizzlePath)
+        migrate(this.db, { migrationsFolder:drizzlePath });
 
         console.log(`Database created.`)
     }
