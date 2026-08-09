@@ -37,19 +37,11 @@ jobs:
             ./src/index.ts `
             --outfile lfmplayr.exe
 
-      - name: Create Windows archive
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path release
-          Compress-Archive `
-            -Path lfmplayr.exe `
-            -DestinationPath release/lfmplayr-windows-x64.zip
-
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: lfmplayr-windows-x64
-          path: release/lfmplayr-windows-x64.zip
+          path: lfmplayr.exe
 
   build-linux:
     name: Build Linux
@@ -79,16 +71,11 @@ jobs:
       - name: Make executable
         run: chmod +x lfmplayr
 
-      - name: Create Linux archive
-        run: |
-          mkdir -p release
-          tar -czf release/lfmplayr-linux-x64.tar.gz lfmplayr
-
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
           name: lfmplayr-linux-x64
-          path: release/lfmplayr-linux-x64.tar.gz
+          path: lfmplayr
 
   release:
     name: Create GitHub Release
