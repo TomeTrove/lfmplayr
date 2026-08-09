@@ -36,7 +36,7 @@ jobs:
             --sourcemap `
             --bytecode `
             --windows-hide-console `
-            --windows-icon=./assets/icon.ico `
+            --windows-icon=./src/assets/icon.ico `
             ./src/server.ts `
             --outfile lfmplayr.exe
         env:
@@ -68,7 +68,7 @@ jobs:
       - name: Build Linux executable
         run: |
           bun build --compile \
-            --define LFMPLAYR_VERSION="'${{ github.ref_name }}'" `
+            --define LFMPLAYR_VERSION="'${{ github.ref_name }}'" \
             --target=bun-linux-x64 \
             --minify \
             --sourcemap \
