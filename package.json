@@ -6,10 +6,10 @@
   "scripts": {
     "generate-db": "bunx drizzle-kit generate --config drizzle.media.config.ts && bunx drizzle-kit generate --config drizzle.users.config.ts",
     "generate-routes": "tsr generate",
-    "generate-css": "bunx tailwindcss -i ./src/index.css -o ./dist/output.css",
+    "generate-css": "bunx @tailwindcss/cli -i ./src/index.css -o ./dist/output.css",
     "prebuild": "bun run generate-routes && bun run generate-css",
     "watch-routes": "tsr watch",
-    "watch-css": "bunx tailwindcss -i ./src/index.css -o ./dist/output.css --watch",
+    "watch-css": "bunx @tailwindcss/cli -i ./src/index.css -o ./dist/output.css --watch",
     "dev": "concurrently \"bun run watch-routes\" \"bun run watch-css\" \"bun --hot src/server.ts\"",
     "build:windows": "bun build --compile --define LFMPLAYR_VERSION=\"v1.0.0\" --target=bun-windows-x64 --minify --sourcemap --bytecode ./src/server.ts --outfile lfmplayr",
     "start": "NODE_ENV=production bun src/server.ts"
@@ -24,6 +24,7 @@
     "react-icons": "^5.7.0"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
     "@tanstack/eslint-plugin-query": "^5.101.4",
     "@tanstack/router-cli": "^1.167.25",
     "@types/bun": "latest",
