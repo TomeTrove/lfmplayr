@@ -33,6 +33,7 @@ jobs:
             --sourcemap `
             --bytecode `
             --windows-hide-console `
+            --windows-icon=./assets/icon.ico `
             ./src/index.ts `
             --outfile lfmplayr.exe
 
