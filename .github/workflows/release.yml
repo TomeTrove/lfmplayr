@@ -89,18 +89,18 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: lfmplayr-windows-x64
-          path: release
+          path: release/windows
 
       - name: Download Linux artifact
         uses: actions/download-artifact@v4
         with:
           name: lfmplayr-linux-x64
-          path: release
+          path: release/linux
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            release/lfmplayr-windows-x64.zip
-            release/lfmplayr-linux-x64.tar.gz
+            release/windows/lfmplayr.exe
+            release/linux/lfmplayr
           generate_release_notes: true
