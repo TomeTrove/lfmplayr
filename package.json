@@ -4,19 +4,34 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun --hot src/index.ts",
-    "build:react": "bun build ./src/index.html --outdir=dist --sourcemap --target=browser --minify --define:process.env.NODE_ENV='\"production\"' --env='BUN_PUBLIC_*'",
-    "build:windows": "bun build --compile --target=bun-windows-x64 --minify --sourcemap --bytecode --windows-hide-console ./src/index.ts --outfile lfmplayr",
-    "start": "NODE_ENV=production bun src/index.ts"
+    "generate-db": "bunx drizzle-kit generate --config drizzle.media.config.ts && bunx drizzle-kit generate --config drizzle.users.config.ts",
+    "generate-routes": "tsr generate",
+    "generate-css": "bunx tailwindcss -i ./src/index.css -o ./dist/output.css",
+    "prebuild": "bun run generate-routes && bun run generate-css",
+    "watch-routes": "tsr watch",
+    "watch-css": "bunx tailwindcss -i ./src/index.css -o ./dist/output.css --watch",
+    "dev": "concurrently \"bun run watch-routes\" \"bun run watch-css\" \"bun --hot src/server.ts\"",
+    "build:windows": "bun build --compile --define LFMPLAYR_VERSION=\"v1.0.0\" --target=bun-windows-x64 --minify --sourcemap --bytecode ./src/server.ts --outfile lfmplayr",
+    "start": "NODE_ENV=production bun src/server.ts"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.101.4",
+    "@tanstack/react-router": "^1.170.23",
+    "@tanstack/react-router-devtools": "^1.167.1",
+    "drizzle-orm": "^1.0.0-rc.4",
     "react": "^19",
-    "react-dom": "^19"
+    "react-dom": "^19",
+    "react-icons": "^5.7.0"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.101.4",
+    "@tanstack/router-cli": "^1.167.25",
     "@types/bun": "latest",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "rcedit": "^5.0.2"
+    "concurrently": "^10.0.4",
+    "drizzle-kit": "^1.0.0-rc.4",
+    "rcedit": "^5.0.2",
+    "tailwindcss": "^4.3.3"
   }
 }

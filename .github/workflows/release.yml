@@ -23,19 +23,24 @@ jobs:
           bun-version: latest
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: |
+          bun install --frozen-lockfile
+          bun run prebuild
 
       - name: Build Windows executable
         run: |
           bun build --compile `
+            --define LFMPLAYR_VERSION="'${{ github.ref_name }}'" `
             --target=bun-windows-x64 `
             --minify `
             --sourcemap `
             --bytecode `
             --windows-hide-console `
             --windows-icon=./assets/icon.ico `
-            ./src/index.ts `
+            ./src/server.ts `
             --outfile lfmplayr.exe
+        env:
+          LFMPLAYR_VERSION: ${{ github.ref_name }}
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
@@ -56,17 +61,22 @@ jobs:
           bun-version: latest
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: |
+          bun install --frozen-lockfile
+          bun run prebuild
 
       - name: Build Linux executable
         run: |
           bun build --compile \
+            --define LFMPLAYR_VERSION="'${{ github.ref_name }}'" `
             --target=bun-linux-x64 \
             --minify \
             --sourcemap \
             --bytecode \
-            ./src/index.ts \
+            ./src/server.ts \
             --outfile lfmplayr
+        env:
+          LFMPLAYR_VERSION: ${{ github.ref_name }}
 
       - name: Make executable
         run: chmod +x lfmplayr
