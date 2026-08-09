@@ -2,7 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { tmpdir } from "node:os";
-
+import { rm } from "node:fs/promises";
 import { Assets } from "./assets";
 
 export class AssetLoader {
@@ -63,5 +63,28 @@ export class AssetLoader {
         this.loaded.set(normalized, destination);
 
         return destination;
+    }
+
+    static async Cleanup(assetPath:string) {
+        await rm(assetPath, {
+            recursive: true,
+            force: true,
+        });
+    }
+    static async Unload(assetPath:string) {
+        const normalized = assetPath
+            .replaceAll("\\", "/")
+            .replace(/\/$/, "");
+        
+        const destination = join(
+            tmpdir(),
+            "lfmplayr",
+            normalized.replace(/^\.\/+/, "")
+        );
+        
+        await rm(destination, {
+            recursive: true,
+            force: true,
+        });
     }
 }

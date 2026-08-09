@@ -31,6 +31,7 @@ class BaseDatabase {
         const drizzlePath = await AssetLoader.Load(this.MigrationPath);
         console.log("drizzlePath", drizzlePath)
         migrate(this.db, { migrationsFolder:drizzlePath });
+        await AssetLoader.Cleanup(drizzlePath);
 
         console.log(`Database created.`)
     }
